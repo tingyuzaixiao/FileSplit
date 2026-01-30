@@ -3,6 +3,7 @@ from langchain_text_splitters import MarkdownHeaderTextSplitter
 from langchain_community.document_loaders import TextLoader
 from transformers import AutoTokenizer
 
+from core.file_split import FileSplit
 from core.gilingual_text_splitter import BilingualTextSplitter
 
 separators = [
@@ -112,8 +113,10 @@ def split_markdown_by_headers(input_file, headers_to_split_on, chunk_size, chunk
 
 
 if __name__ == "__main__":
+    file_split = FileSplit()
+
     input_file = "/Users/zhangjiang/Downloads/广东大湾区空天信息研究院2025年度职工考核评价办法.md"
-    final_chunks = split_markdown_by_headers(input_file, HEADERS_TO_SPLIT_ON, CHUNK_SIZE, CHUNK_OVERLAP)
+    final_chunks = file_split.split_markdown(input_file)
     for i, chunk in enumerate(final_chunks):
         print(chunk.page_content)
         print("\n")
