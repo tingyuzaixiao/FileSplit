@@ -29,7 +29,7 @@ HEADERS_TO_SPLIT_ON = [
     ("####", "Header4"),
 ]
 
-MODEL_NAME = "BAAI/bge-m3"
+MODEL_NAME = "/home/zhangjiang/bge-m3-model"
 
 CHUNK_SIZE = 512
 CHUNK_OVERLAP = 0
