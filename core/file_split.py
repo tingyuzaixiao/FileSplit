@@ -113,6 +113,7 @@ class FileSplit:
 
         # 2. 递归分割(处理过长的块)
         # 如果某个块内容过长(超过chunk_size)，按内容递归分割
+        chunk_id = 1
         for chunk in headers_chunks:
             # 如果块内容长度超过限制，则递归分割
             header = self._merge_headers(chunk.metadata)
@@ -138,7 +139,16 @@ class FileSplit:
                         sub_chunk_content = (self.LATER_HEADER_PREFIX + header +
                                              self.HEADER_CONTENT_SEG + sub_chunk)
                     # 保留父级标题信息(避免结构断裂)
-                    fn(page_content=sub_chunk_content,  metadata=chunk.metadata)
+                    fn(doc_id=doc_id,
+                       doc_name=doc_name,
+                       chunk_id=chunk_id,
+                       content=sub_chunk_content, 
+                       metadata=chunk.metadata)
+                    chunk_id = chunk_id + 1
             else:
-                fn(page_content=header + self.HEADER_CONTENT_SEG + chunk.page_content,
+                fn(doc_id=doc_id,
+                   doc_name=doc_name,
+                   chunk_id=chunk_id,
+                   content=header + self.HEADER_CONTENT_SEG + chunk.page_content,
                    metadata=chunk.metadata)
+                chunk_id = chunk_id + 1
