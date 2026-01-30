@@ -30,7 +30,7 @@ class BilingualTextSplitter(RecursiveCharacterTextSplitter):
         )
 
     @staticmethod
-    def get_optimized_separators() -> List[str]:
+    def get_default_separators() -> List[str]:
         """修正版：全正则 + 零宽断言 + 语义顺序"""
         return [
             # =============== 文档结构（字面量，需转义特殊字符）===============
