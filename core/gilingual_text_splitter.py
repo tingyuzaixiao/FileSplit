@@ -18,13 +18,12 @@ class BilingualTextSplitter(RecursiveCharacterTextSplitter):
             separators = self.get_default_separators()
 
         # 如果是字符数，使用len；如果是token数，需使用tokenizer
-        length_function = kwargs.get('length_function', len)
+        # length_function = kwargs.get('length_function', len)
 
         super().__init__(
             chunk_size=chunk_size,
             chunk_overlap=chunk_overlap,
             separators=separators,
-            length_function=length_function,
             **kwargs
         )
 
