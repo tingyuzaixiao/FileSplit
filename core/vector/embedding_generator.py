@@ -1,9 +1,7 @@
-from typing import Optional, Union
 from urllib.parse import urljoin
 
-import httpx
-
 from core.tool.http_req import send_request
+from core.tool.thread_pool import logger
 
 
 class EmbeddingGenerator:
@@ -31,7 +29,7 @@ class EmbeddingGenerator:
             data = res_data.get("data")
             return data.get('dense_vec'), data.get('lexical_weights')
         else:
-            print(f"请求失败 (code:{res_data.get('code')}): {res_data.get('msg')}")
+            logger.error(f"请求失败 (code:{res_data.get('code')}): {res_data.get('msg')}")
             raise Exception(f"请求失败 (code:{res_data.get('code')}): {res_data.get('msg')}")
 
 if __name__ == "__main__":

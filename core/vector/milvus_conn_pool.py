@@ -28,13 +28,13 @@ class MilvusConnPool:
         for i in range(pool_size):
             alias = f"conn_{i}"
             self.create_connection(alias=alias)
+            self._pool.put(alias)
 
     def create_connection(self, alias: str):
         connections.connect(
             alias=alias,
             uri=self.uri
         )
-        self._pool.put(alias)
 
     @staticmethod
     def test_connection(alias: str) -> bool:
@@ -46,18 +46,7 @@ class MilvusConnPool:
 
     def acquire(self, timeout: float = 5.0) -> str:
         try:
-            alias = self._pool.get(timeout=timeout)
-            # 健康检查：确认连接是否有效
-            try:
-                connections.get_connection_addr(alias)
-                return alias
-            except Exception:
-                try:
-                    connections.connect(alias=alias, uri=self.uri)
-                    return alias
-                except Exception as e:
-                    self._pool.put(alias)  # 将别名放回池中
-                    raise ConnectionError(f"Failed to reconnect alias {alias}") from e
+            return self._pool.get(timeout=timeout)
         except Empty:
             raise QueueFullError("Milvus connection pool exhausted")
 

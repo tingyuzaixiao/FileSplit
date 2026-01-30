@@ -3,6 +3,8 @@ from typing import Optional
 
 import httpx
 
+from config.logging_config import logger
+
 
 def send_request(url: str,
                  method: str = "POST",
@@ -29,21 +31,19 @@ def send_request(url: str,
             response.raise_for_status()
             return response
         except httpx.HTTPStatusError as e:
-            print(f"HTTP 错误: {e.response.status_code} - {e.response.text}")
+            logger.error(f"HTTP 错误: {e.response.status_code} - {e.response.text}")
             return None
         except httpx.ReadTimeout as e:
-            print("readTimeout")
+            logger.error("readTimeout")
             continue
         except httpx.ConnectTimeout as e:
-            print("connectTimeout")
+            logger.error("connectTimeout")
             continue
         except httpx.RequestError as e:
-            print("httpx.RequestError")
-            print(e)
+            logger.error(f"send_request catch exception: {e}")
             return None
         except Exception as e:
-            print("Exception")
-            print(e)
+            logger.error(f"send_request catch exception: {e}")
             return None
         finally:
             time.sleep(0.005)

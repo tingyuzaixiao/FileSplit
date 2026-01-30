@@ -1,15 +1,12 @@
-import logging
 import threading
 import time
 from concurrent.futures import ThreadPoolExecutor, Future, wait
-from queue import Queue, Full
 from typing import Callable, Any, Optional, Dict
 from contextlib import contextmanager
 
+from config.logging_config import logger
 from core.tool.atomic_counter import AtomicCounter
 from core.tool.queue_full_error import QueueFullError
-
-logger = logging.getLogger(__name__)
 
 
 class ThreadPool:

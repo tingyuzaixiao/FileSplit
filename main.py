@@ -5,6 +5,7 @@ from transformers import AutoTokenizer
 
 from core.file_split import FileSplit
 from core.gilingual_text_splitter import BilingualTextSplitter
+from core.vector.milvus_write import MilvusWrite
 
 separators = [
     "\n\n",        # 段落分隔（优先级最高）
@@ -111,12 +112,30 @@ def split_markdown_by_headers(input_file, headers_to_split_on, chunk_size, chunk
             final_chunks.append(new_chunk)
     return final_chunks
 
+class DataProcess:
+    def __init__(self, collection_name: str):
+        self._milvus_write = MilvusWrite()
+        self._collection_name = collection_name
+
+    def process(self, doc_id: int, doc_name: str, chunk_id: int, content: str, metadata: dict):
+        data = self._milvus_write.gene_data(doc_id = doc_id,
+                                     doc_name = doc_name,
+                                     text=content,
+                                     chunk_id = chunk_id)
+        self._milvus_write.write(collection_name = self._collection_name,
+                                 data = data)
+
+
 
 if __name__ == "__main__":
-    file_split = FileSplit()
+    collection_name = "cn_1"
+    data_process = DataProcess(collection_name = collection_name)
 
-    input_file = "/Users/zhangjiang/Downloads/广东大湾区空天信息研究院2025年度职工考核评价办法.md"
-    final_chunks = file_split.split_markdown(input_file)
-    for i, chunk in enumerate(final_chunks):
-        print(chunk.page_content)
-        print("\n")
+    doc_id = 1
+    doc_name = "/home/zhangjiang/广东大湾区空天信息研究院2025年度职工考核评价办法.md"
+    file_split = FileSplit()
+    file_split.split_markdown_callback(
+        doc_id = doc_id,
+        doc_name=doc_name,
+        fn = data_process.process)
+    print(f"doc_name: {doc_name} process Finished")

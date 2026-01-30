@@ -1,3 +1,5 @@
+from typing import List, Callable
+
 from langchain_community.document_loaders import TextLoader
 from langchain_core.documents import Document
 from langchain_text_splitters import MarkdownHeaderTextSplitter
@@ -60,7 +62,7 @@ class FileSplit:
         # 例如：将"## 财务表现"作为边界，分割出财务表现部分
         return splitter.split_text(documents[0].page_content)
 
-    def split_markdown(self, input_file):
+    def split_markdown(self, input_file) -> List[Document]:
         # 1. 先按标题分割
         headers_chunks = self._split_by_headers(input_file)
 
@@ -104,3 +106,39 @@ class FileSplit:
                 )
                 final_chunks.append(new_chunk)
         return final_chunks
+
+    def split_markdown_callback(self, doc_id: int, doc_name: str, fn: Callable) -> None:
+        # 1. 先按标题分割
+        headers_chunks = self._split_by_headers(doc_name)
+
+        # 2. 递归分割(处理过长的块)
+        # 如果某个块内容过长(超过chunk_size)，按内容递归分割
+        for chunk in headers_chunks:
+            # 如果块内容长度超过限制，则递归分割
+            header = self._merge_headers(chunk.metadata)
+            header_len = self._length_function(header)
+
+            if header_len + self._length_function(chunk.page_content) > self.chunk_size:
+                # 使用递归分割器处理长内容
+                recursive_splitter = BilingualTextSplitter(
+                    chunk_size=self.chunk_size - header_len,
+                    chunk_overlap=self.chunk_overlap,
+                    length_function=self._length_function
+                )
+                # 递归分割内容(保留标题元数据)
+                sub_chunks = recursive_splitter.split_text(chunk.page_content)
+
+                # 为每个子块添加相同的元数据(保留标题结构)
+                first_sub_chunk = True
+                for sub_chunk in sub_chunks:
+                    if first_sub_chunk:
+                        first_sub_chunk = False
+                        sub_chunk_content = header + self.HEADER_CONTENT_SEG + sub_chunk
+                    else:
+                        sub_chunk_content = (self.LATER_HEADER_PREFIX + header +
+                                             self.HEADER_CONTENT_SEG + sub_chunk)
+                    # 保留父级标题信息(避免结构断裂)
+                    fn(page_content=sub_chunk_content,  metadata=chunk.metadata)
+            else:
+                fn(page_content=header + self.HEADER_CONTENT_SEG + chunk.page_content,
+                   metadata=chunk.metadata)

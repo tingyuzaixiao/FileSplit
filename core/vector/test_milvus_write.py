@@ -4,10 +4,10 @@ from typing import List, Callable
 from pymilvus import MilvusClient, Collection
 
 from core.tool.hash import text_to_sha256
-from core.tool.milvus_conn_pool import MilvusConnPool
+from core.vector.milvus_conn_pool import MilvusConnPool
 from core.tool.thread_pool import ThreadPool
 from core.tool.time import get_current_timestamp_ms
-from core.vector.test_vector_create import EmbeddingGenerator
+from core.vector.embedding_generator import EmbeddingGenerator
 
 def gene_data(emb_generator: EmbeddingGenerator, text: str, chunk_id: int) -> List[dict]:
     dense_vec, lexical_weights = emb_generator.embeddings(text)

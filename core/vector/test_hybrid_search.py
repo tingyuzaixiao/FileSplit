@@ -1,6 +1,6 @@
 from pymilvus import AnnSearchRequest, Function, FunctionType, MilvusClient
 
-from core.vector.test_vector_create import EmbeddingGenerator
+from core.vector.embedding_generator import EmbeddingGenerator
 
 if __name__ == "__main__":
     embeddingGenerator = EmbeddingGenerator("http://172.18.10.61:8010")
