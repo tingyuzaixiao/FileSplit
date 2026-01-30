@@ -44,7 +44,7 @@ class CollectionCreate:
                          is_partition_key=True)
         schema.add_field(field_name="file_name",
                          datatype=DataType.VARCHAR,
-                         max_length=64)
+                         max_length=128)
         schema.add_field(field_name="chunk_id",
                          datatype=DataType.INT64)
         schema.add_field(field_name="metadata",

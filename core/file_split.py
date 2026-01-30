@@ -139,9 +139,9 @@ class FileSplit:
                         sub_chunk_content = (self.LATER_HEADER_PREFIX + header +
                                              self.HEADER_CONTENT_SEG + sub_chunk)
                     # 保留父级标题信息(避免结构断裂)
-                    fn(doc_id=doc_id,
+                    fn(doc_id=doc_id, 
                        doc_name=doc_name,
-                       chunk_id=chunk_id,
+                       chunk_id=chunk_id, 
                        content=sub_chunk_content, 
                        metadata=chunk.metadata)
                     chunk_id = chunk_id + 1
