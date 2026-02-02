@@ -33,7 +33,7 @@ class CollectionCreate:
                          auto_id=False)
         schema.add_field(field_name="raw_text",
                          datatype=DataType.VARCHAR,
-                         max_length=2048)
+                         max_length=4096)
         schema.add_field(field_name="dense_vector",
                          datatype=DataType.FLOAT_VECTOR,
                          dim=1024)
@@ -44,7 +44,7 @@ class CollectionCreate:
                          is_partition_key=True)
         schema.add_field(field_name="file_name",
                          datatype=DataType.VARCHAR,
-                         max_length=128)
+                         max_length=256)
         schema.add_field(field_name="chunk_id",
                          datatype=DataType.INT64)
         schema.add_field(field_name="metadata",
