@@ -3,6 +3,7 @@ from langchain_text_splitters import MarkdownHeaderTextSplitter
 from langchain_community.document_loaders import TextLoader
 from transformers import AutoTokenizer
 
+from config.logging_config import logger
 from core.file_split import FileSplit
 from core.gilingual_text_splitter import BilingualTextSplitter
 from core.vector.milvus_write import MilvusWrite
@@ -118,6 +119,7 @@ class DataProcess:
         self._collection_name = collection_name
 
     def process(self, doc_id: int, doc_name: str, chunk_id: int, content: str, metadata: dict):
+        logger.info(f"Processing doc_id:{doc_id}, chunk_id:{chunk_id}, content:{content}, metadata:{metadata}")
         data = self._milvus_write.gene_data(doc_id = doc_id,
                                      doc_name = doc_name,
                                      text=content,

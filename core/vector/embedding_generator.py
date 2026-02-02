@@ -1,7 +1,7 @@
 from urllib.parse import urljoin
 
+from config.logging_config import logger
 from core.tool.http_req import send_request
-from core.tool.thread_pool import logger
 
 
 class EmbeddingGenerator:

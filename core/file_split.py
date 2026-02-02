@@ -5,6 +5,7 @@ from langchain_core.documents import Document
 from langchain_text_splitters import MarkdownHeaderTextSplitter
 from transformers import AutoTokenizer
 
+from config.logging_config import logger
 from core.gilingual_text_splitter import BilingualTextSplitter
 
 
@@ -152,3 +153,4 @@ class FileSplit:
                    content=header + self.HEADER_CONTENT_SEG + chunk.page_content,
                    metadata=chunk.metadata)
                 chunk_id = chunk_id + 1
+        logger.info(f"total chunk: {chunk_id-1}")
