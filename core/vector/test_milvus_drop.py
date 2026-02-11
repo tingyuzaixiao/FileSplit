@@ -3,7 +3,7 @@ from pymilvus import MilvusClient
 if __name__ == "__main__":
     client = MilvusClient(uri="http://172.18.10.65:19530", timeout=5.0)
 
-    collection_name = "test_1"
+    collection_name = "cn_1"
     need_delete = True
 
     res = client.list_collections()

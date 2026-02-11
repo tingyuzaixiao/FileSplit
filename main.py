@@ -1,3 +1,5 @@
+import argparse
+
 from langchain_core.documents import Document
 from langchain_text_splitters import MarkdownHeaderTextSplitter
 from langchain_community.document_loaders import TextLoader
@@ -130,14 +132,21 @@ class DataProcess:
 
 
 if __name__ == "__main__":
-    collection_name = "cn_1"
-    data_process = DataProcess(collection_name = collection_name)
+    parser = argparse.ArgumentParser(
+        description='Process document with metadata',
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter
+    )
+    parser.add_argument('doc_id', type=int, help='doc id')
+    parser.add_argument('file_path', type=str, help='file path')
+    parser.add_argument('collection_name', type=str, help='collection name')
+    args = parser.parse_args()
+    # collection_name = "cn_1"
+    # doc_id = 1
+    # doc_name = "/home/zhangjiang/广东大湾区空天信息研究院2025年度职工考核评价办法.md"
 
-    doc_id = 1
-    doc_name = "/home/zhangjiang/广东大湾区空天信息研究院2025年度职工考核评价办法.md"
+    data_process = DataProcess(collection_name = args.collection_name)
     file_split = FileSplit()
     file_split.split_markdown_callback(
-        doc_id = doc_id,
-        doc_name=doc_name,
+        doc_id = args.doc_id,
+        doc_name= args.file_path,
         fn = data_process.process)
-    print(f"doc_name: {doc_name} process Finished")

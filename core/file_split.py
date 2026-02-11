@@ -114,7 +114,7 @@ class FileSplit:
 
         # 2. 递归分割(处理过长的块)
         # 如果某个块内容过长(超过chunk_size)，按内容递归分割
-        chunk_id = 1
+        chunk_id = 0
         for chunk in headers_chunks:
             # 如果块内容长度超过限制，则递归分割
             header = self._merge_headers(chunk.metadata)
@@ -153,4 +153,5 @@ class FileSplit:
                    content=header + self.HEADER_CONTENT_SEG + chunk.page_content,
                    metadata=chunk.metadata)
                 chunk_id = chunk_id + 1
-        logger.info(f"total chunk: {chunk_id-1}")
+        logger.info(f"total chunk: {chunk_id}")
+        print(chunk_id)
