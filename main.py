@@ -146,7 +146,10 @@ if __name__ == "__main__":
 
     data_process = DataProcess(collection_name = args.collection_name)
     file_split = FileSplit()
-    file_split.split_markdown_callback(
+    chunk_num = file_split.split_markdown_callback(
         doc_id = args.doc_id,
         doc_name= args.file_path,
         fn = data_process.process)
+    # 必须保留，不能删除。java侧通过python输出流获取输出。
+    # 必须用print，因为print只输出参数，而log输出包含日志头，不利于java解析
+    print(chunk_num)

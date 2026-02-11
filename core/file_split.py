@@ -108,7 +108,7 @@ class FileSplit:
                 final_chunks.append(new_chunk)
         return final_chunks
 
-    def split_markdown_callback(self, doc_id: int, doc_name: str, fn: Callable) -> None:
+    def split_markdown_callback(self, doc_id: int, doc_name: str, fn: Callable) -> int:
         # 1. 先按标题分割
         headers_chunks = self._split_by_headers(doc_name)
 
@@ -154,4 +154,4 @@ class FileSplit:
                    metadata=chunk.metadata)
                 chunk_id = chunk_id + 1
         logger.info(f"total chunk: {chunk_id}")
-        print(chunk_id)
+        return chunk_id
