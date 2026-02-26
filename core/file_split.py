@@ -108,7 +108,7 @@ class FileSplit:
                 final_chunks.append(new_chunk)
         return final_chunks
 
-    def split_markdown_callback(self, doc_id: int, doc_name: str, fn: Callable) -> int:
+    def split_markdown_callback(self, doc_name: str, fn: Callable) -> int:
         # 1. 先按标题分割
         headers_chunks = self._split_by_headers(doc_name)
 
@@ -140,16 +140,12 @@ class FileSplit:
                         sub_chunk_content = (self.LATER_HEADER_PREFIX + header +
                                              self.HEADER_CONTENT_SEG + sub_chunk)
                     # 保留父级标题信息(避免结构断裂)
-                    fn(doc_id=doc_id, 
-                       doc_name=doc_name,
-                       chunk_id=chunk_id, 
+                    fn(chunk_id=chunk_id,
                        content=sub_chunk_content, 
                        metadata=chunk.metadata)
                     chunk_id = chunk_id + 1
             else:
-                fn(doc_id=doc_id,
-                   doc_name=doc_name,
-                   chunk_id=chunk_id,
+                fn(chunk_id=chunk_id,
                    content=header + self.HEADER_CONTENT_SEG + chunk.page_content,
                    metadata=chunk.metadata)
                 chunk_id = chunk_id + 1

@@ -2,6 +2,7 @@ import time
 from typing import List
 
 from pymilvus import Collection
+from pymilvus.exceptions import SchemaNotReadyException
 
 from config.logging_config import logger
 from core.tool.atomic_counter import AtomicCounter
@@ -25,6 +26,20 @@ class MilvusWrite:
         self.embedding_generator = EmbeddingGenerator(base_url=embedding_uri)
         self.task_thread = ThreadPool(max_workers=max_workers, queue_size=queue_size)
         self.task_counter = AtomicCounter(0)
+
+    def remove_doc(self, collection_name: str, doc_id: int):
+        conn_alias = None
+        try:
+            conn_alias = self.conn_pool.acquire()
+            collection = Collection(collection_name, using=conn_alias)
+            res = collection.delete(expr = f'doc_id == {doc_id}')
+            logger.info(f"collection: {collection_name} delete item num: {res.delete_count}")
+        except Exception as e:
+            logger.error(f"remove_doc catch exception {e}")
+            raise
+        finally:
+            if conn_alias:
+                self.conn_pool.release(conn_alias)
 
     def write_batch(self, collection_name: str, data_batch: List[List[dict]]) -> None:
         for data in data_batch:

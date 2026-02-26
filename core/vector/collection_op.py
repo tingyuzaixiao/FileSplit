@@ -1,10 +1,18 @@
 from pymilvus import DataType, MilvusClient
 
-class CollectionCreate:
-    def __init__(self, client: MilvusClient):
-        self._client = client
+class CollectionOp:
+    def __init__(self, milvus_uri: str, timeout: float = 5.0):
+        self._client = MilvusClient(uri=milvus_uri, timeout=timeout)
 
-    def create_collection(self, collection_name: str):
+    def has(self, collection_name: str) -> bool:
+        return self._client.has_collection(collection_name)
+
+    def load(self, collection_name: str):
+        self._client.load_collection(
+            collection_name=collection_name
+        )
+
+    def create(self, collection_name: str):
         schema = self._create_schema()
         index_params = self._create_index_params()
 
@@ -94,6 +102,5 @@ class CollectionCreate:
         return index_params
 
 if __name__ == '__main__':
-    client = MilvusClient(uri="http://172.18.10.65:19530", timeout=5.0)
-    collection = CollectionCreate(client)
-    collection.create_collection("cn_1")
+    collection = CollectionOp(milvus_uri="http://172.18.10.65:19530", timeout=5.0)
+    collection.create("cn_1")

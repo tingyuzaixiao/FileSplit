@@ -5,10 +5,9 @@ from langchain_text_splitters import MarkdownHeaderTextSplitter
 from langchain_community.document_loaders import TextLoader
 from transformers import AutoTokenizer
 
-from config.logging_config import logger
+from core.data_process import DataProcess
 from core.file_split import FileSplit
 from core.gilingual_text_splitter import BilingualTextSplitter
-from core.vector.milvus_write import MilvusWrite
 
 separators = [
     "\n\n",        # 段落分隔（优先级最高）
@@ -115,22 +114,6 @@ def split_markdown_by_headers(input_file, headers_to_split_on, chunk_size, chunk
             final_chunks.append(new_chunk)
     return final_chunks
 
-class DataProcess:
-    def __init__(self, collection_name: str):
-        self._milvus_write = MilvusWrite()
-        self._collection_name = collection_name
-
-    def process(self, doc_id: int, doc_name: str, chunk_id: int, content: str, metadata: dict):
-        logger.info(f"Processing doc_id:{doc_id}, chunk_id:{chunk_id}, content:{content}, metadata:{metadata}")
-        data = self._milvus_write.gene_data(doc_id = doc_id,
-                                     doc_name = doc_name,
-                                     text=content,
-                                     chunk_id = chunk_id)
-        self._milvus_write.write(collection_name = self._collection_name,
-                                 data = data)
-
-
-
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description='Process document with metadata',
@@ -139,15 +122,20 @@ if __name__ == "__main__":
     parser.add_argument('doc_id', type=int, help='doc id')
     parser.add_argument('file_path', type=str, help='file path')
     parser.add_argument('collection_name', type=str, help='collection name')
+    parser.add_argument('milvus_uri', type=str, help='milvus uri')
+    parser.add_argument('embedding_uri', type=str, help='embedding uri')
     args = parser.parse_args()
     # collection_name = "cn_1"
     # doc_id = 1
     # doc_name = "/home/zhangjiang/广东大湾区空天信息研究院2025年度职工考核评价办法.md"
 
-    data_process = DataProcess(collection_name = args.collection_name)
+    data_process = DataProcess(collection_name = args.collection_name,
+                               milvus_uri = args.milvus_uri,
+                               embedding_uri = args.embedding_uri,
+                               doc_id = args.doc_id,
+                               input_file = args.file_path)
     file_split = FileSplit()
     chunk_num = file_split.split_markdown_callback(
-        doc_id = args.doc_id,
         doc_name= args.file_path,
         fn = data_process.process)
     # 必须保留，不能删除。java侧通过python输出流获取输出。
