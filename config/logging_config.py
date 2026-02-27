@@ -68,7 +68,7 @@ def setup_access_logging():
 
     access_logger = logging.getLogger('access')
     access_logger.setLevel(logging.INFO)
-    access_logger.propagate = False
+    access_logger.propagate = True
 
     # 清除已有处理器
     for handler in access_logger.handlers[:]:

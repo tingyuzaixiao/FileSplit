@@ -24,7 +24,7 @@ class CollectionOp:
             num_shards=1,
             # enable_mmap=False,
             consistency_level="Eventually",
-            num_partitions=256,
+            num_partitions=512,
             properties={
                 "mmap.enabled": False,
                 "partitionkey.isolation": True,

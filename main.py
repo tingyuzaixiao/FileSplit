@@ -5,6 +5,7 @@ from langchain_text_splitters import MarkdownHeaderTextSplitter
 from langchain_community.document_loaders import TextLoader
 from transformers import AutoTokenizer
 
+from config.logging_config import access_logger
 from core.data_process import DataProcess
 from core.file_split import FileSplit
 from core.gilingual_text_splitter import BilingualTextSplitter
@@ -128,6 +129,9 @@ if __name__ == "__main__":
     # collection_name = "cn_1"
     # doc_id = 1
     # doc_name = "/home/zhangjiang/广东大湾区空天信息研究院2025年度职工考核评价办法.md"
+    access_logger.info(f"begin process doc_id:{args.doc_id}, file_path:{args.file_path}, "
+                       f"collection_name:{args.collection_name}, milvus_uri:{args.milvus_uri}, "
+                       f"embedding_uri:{args.embedding_uri}")
 
     data_process = DataProcess(collection_name = args.collection_name,
                                milvus_uri = args.milvus_uri,
@@ -138,6 +142,7 @@ if __name__ == "__main__":
     chunk_num = file_split.split_markdown_callback(
         doc_name= args.file_path,
         fn = data_process.process)
+    access_logger.info(f"end process doc_id:{args.doc_id}, file_path:{args.file_path}")
     # 必须保留，不能删除。java侧通过python输出流获取输出。
     # 必须用print，因为print只输出参数，而log输出包含日志头，不利于java解析
     print(chunk_num)
